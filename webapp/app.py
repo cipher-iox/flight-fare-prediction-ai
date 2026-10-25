@@ -130,25 +130,24 @@ def predict():
             input_arr = np.array([list(row_dict.values())])
             raw_pred = float(model.predict(input_arr)[0])
 
-        INR_TO_PKR = 3.32
-        fare_pkr = max(5000, round(raw_pred * INR_TO_PKR))
+        fare_inr = max(1500, round(raw_pred))
 
-        # Tier calculation in PKR
-        if fare_pkr < 16500:
+        # Tier calculation in INR
+        if fare_inr < 5000:
             tier, color = "Saver Economy", "#10b981"
-        elif fare_pkr < 28000:
+        elif fare_inr < 8500:
             tier, color = "Standard Economy", "#3b82f6"
-        elif fare_pkr < 45000:
+        elif fare_inr < 13000:
             tier, color = "Flexible Economy", "#f59e0b"
-        elif fare_pkr < 70000:
+        elif fare_inr < 20000:
             tier, color = "Premium Fare", "#ef4444"
         else:
             tier, color = "Business / Luxury", "#a855f7"
 
         return jsonify({
-            'fare': fare_pkr,
-            'fare_formatted': f"Rs. {fare_pkr:,}",
-            'fare_usd': round(fare_pkr / 278.5, 2),
+            'fare': fare_inr,
+            'fare_formatted': f"₹{fare_inr:,}",
+            'fare_usd': round(fare_inr / 83.5, 2),
             'tier': tier,
             'color': color,
             'airline': airline,

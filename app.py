@@ -17,9 +17,6 @@ import streamlit as st
 import plotly.graph_objects as go
 import plotly.express as px
 
-# ── Exchange Rates (Base dataset in INR) ───────────────────────────────────────
-INR_TO_PKR = 3.32  # 1 INR = ~3.32 PKR
-
 # ── Page Configuration ────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="SkyFare | Commercial Flight Price Estimator",
@@ -281,14 +278,10 @@ def load_dataset():
     csv_path = os.path.join(os.path.dirname(__file__), 'dataset', 'Data_Train.csv')
     xlsx_path = os.path.join(os.path.dirname(__file__), 'dataset', 'Data_Train.xlsx')
     if os.path.exists(csv_path):
-        df_raw = pd.read_csv(csv_path)
+        return pd.read_csv(csv_path)
     elif os.path.exists(xlsx_path):
-        df_raw = pd.read_excel(xlsx_path)
-    else:
-        return None
-    # Add PKR converted price column
-    df_raw['Price_PKR'] = (df_raw['Price'] * INR_TO_PKR).round()
-    return df_raw
+        return pd.read_excel(xlsx_path)
+    return None
 
 df = load_dataset()
 
@@ -323,22 +316,22 @@ with st.sidebar:
 
     st.markdown("#### Currency Settings")
     currency = st.selectbox("Display Currency", [
-        "PKR (Rs.) — Pakistani Rupee",
+        "INR (₹) — Indian Rupee",
         "USD ($) — US Dollar",
         "EUR (€) — Euro",
         "GBP (£) — British Pound",
         "AED (AED) — UAE Dirham",
-        "SAR (SAR) — Saudi Riyal"
+        "PKR (Rs.) — Pakistani Rupee"
     ], index=0)
 
-    # Conversion rates relative to PKR
+    # Conversion rates relative to INR
     curr_rates = {
-        "PKR (Rs.) — Pakistani Rupee": (1.0, "Rs. "),
-        "USD ($) — US Dollar": (1 / 278.5, "$"),
-        "EUR (€) — Euro": (1 / 302.0, "€"),
-        "GBP (£) — British Pound": (1 / 355.0, "£"),
-        "AED (AED) — UAE Dirham": (1 / 75.8, "AED "),
-        "SAR (SAR) — Saudi Riyal": (1 / 74.2, "SAR ")
+        "INR (₹) — Indian Rupee": (1.0, "₹"),
+        "USD ($) — US Dollar": (1 / 83.5, "$"),
+        "EUR (€) — Euro": (1 / 90.2, "€"),
+        "GBP (£) — British Pound": (1 / 105.4, "£"),
+        "AED (AED) — UAE Dirham": (1 / 22.7, "AED "),
+        "PKR (Rs.) — Pakistani Rupee": (3.32, "Rs. ")
     }
     fx_rate, curr_sym = curr_rates[currency]
 
@@ -348,7 +341,7 @@ with st.sidebar:
     - **Course:** AIC354 ML Fundamentals
     - **Methodology:** 10-Fold Cross-Validation
     - **Evaluated Dataset:** 10,683 Commercial Flights
-    - **Standard Currency:** Pakistani Rupee (PKR)
+    - **Standard Currency:** Indian Rupee (INR ₹)
     """)
 
     if model_bundle:
@@ -357,8 +350,7 @@ with st.sidebar:
         st.markdown(f"**Model:** `{model_bundle.get('model_name', 'Random Forest Regressor')}`")
         st.markdown(f"**Input Attributes:** `{len(model_bundle.get('features', []))}`")
         if 'rmse' in model_bundle:
-            rmse_pkr = model_bundle['rmse'] * INR_TO_PKR
-            st.markdown(f"**CV Error (RMSE):** `Rs. {rmse_pkr:,.0f}`")
+            st.markdown(f"**CV Error (RMSE):** `₹{model_bundle['rmse']:,.2f}`")
 
 # ══════════════════════════════════════════════════════════════════════════════
 # HEADER / BANNER
@@ -375,7 +367,7 @@ st.markdown("""
 
 # ── Summary KPIs ──────────────────────────────────────────────────────────────
 k1, k2, k3, k4 = st.columns(4)
-avg_national_pkr = 9087 * INR_TO_PKR
+avg_national_inr = 9087.0
 
 with k1:
     st.markdown("""
@@ -398,7 +390,7 @@ with k3:
 with k4:
     st.markdown(f"""
     <div class="kpi-box">
-      <div class="kpi-val">{curr_sym}{(avg_national_pkr * fx_rate):,.0f}</div>
+      <div class="kpi-val">{curr_sym}{(avg_national_inr * fx_rate):,.0f}</div>
       <div class="kpi-lbl">Average Ticket Fare</div>
     </div>""", unsafe_allow_html=True)
 
@@ -533,7 +525,7 @@ with tab1:
         submitted = st.form_submit_button("Calculate Estimated Fare", use_container_width=True)
 
     # ── Calculation & Display ─────────────────────────────────────────────────
-    if submitted or 'last_pkr_fare' in st.session_state:
+    if submitted or 'last_inr_fare' in st.session_state:
         if model_bundle is not None:
             le_dict = model_bundle.get('le_dict', {})
             features = model_bundle.get('features', [])
@@ -575,24 +567,23 @@ with tab1:
                 input_arr = np.array([list(row_dict.values())])
                 pred_raw = float(model.predict(input_arr)[0])
 
-            # Convert to PKR
-            fare_pkr = max(5000.0, float(pred_raw * INR_TO_PKR))
-            st.session_state.last_pkr_fare = fare_pkr
+            fare_inr = max(1500.0, float(pred_raw))
+            st.session_state.last_inr_fare = fare_inr
 
-            # Professional Fare Tiers in PKR
-            if fare_pkr < 16500:
+            # Professional Fare Tiers in INR
+            if fare_inr < 5000:
                 tier = "Saver Economy"
                 tier_bg, tier_fg = "#0f2e1e", "#34d399"
                 advisory = "Highly competitive rate. Ideal for budget travelers; check cabin baggage limits."
-            elif fare_pkr < 28000:
+            elif fare_inr < 8500:
                 tier = "Standard Economy"
                 tier_bg, tier_fg = "#14253d", "#60a5fa"
                 advisory = "Fair market price for domestic routes. Regular fare with standard seating."
-            elif fare_pkr < 45000:
+            elif fare_inr < 13000:
                 tier = "Flexible Economy"
                 tier_bg, tier_fg = "#2e210f", "#fbbf24"
                 advisory = "Elevated fare due to high route demand or proximity to departure date."
-            elif fare_pkr < 70000:
+            elif fare_inr < 20000:
                 tier = "Premium / High Demand"
                 tier_bg, tier_fg = "#331616", "#f87171"
                 advisory = "Peak pricing. Flexible dates or early morning flights may provide substantial savings."
@@ -601,10 +592,10 @@ with tab1:
                 tier_bg, tier_fg = "#261738", "#c084fc"
                 advisory = "Premium booking tier with priority services, flexible rescheduling, and extra baggage."
 
-            disp_amount = fare_pkr * fx_rate
-            diff_pct = ((fare_pkr - avg_national_pkr) / avg_national_pkr) * 100
+            disp_amount = fare_inr * fx_rate
+            diff_pct = ((fare_inr - avg_national_inr) / avg_national_inr) * 100
             diff_sign = "lower" if diff_pct < 0 else "higher"
-            cost_hr = (fare_pkr / (total_mins / 60)) if total_mins > 0 else 0
+            cost_hr = (fare_inr / (total_mins / 60)) if total_mins > 0 else 0
 
             st.markdown("<br>", unsafe_allow_html=True)
 
@@ -662,30 +653,30 @@ with tab1:
                 </div>""", unsafe_allow_html=True)
 
             with col_scale:
-                # Clean Price Gauge in PKR
+                # Clean Price Gauge in INR
                 fig_gauge = go.Figure(go.Indicator(
                     mode="gauge+number+delta",
-                    value=fare_pkr,
-                    title={"text": "Market Fare Benchmark (PKR)", "font": {"color": "#94a3b8", "size": 13}},
-                    number={"prefix": "Rs. ", "valueformat": ",.0f", "font": {"color": "#f8fafc", "size": 30}},
-                    delta={"reference": avg_national_pkr, "relative": False,
+                    value=fare_inr,
+                    title={"text": "Market Fare Benchmark (INR ₹)", "font": {"color": "#94a3b8", "size": 13}},
+                    number={"prefix": "₹", "valueformat": ",.0f", "font": {"color": "#f8fafc", "size": 30}},
+                    delta={"reference": avg_national_inr, "relative": False,
                            "decreasing": {"color": "#22c55e"}, "increasing": {"color": "#ef4444"}},
                     gauge={
-                        "axis": {"range": [0, 110000], "tickcolor": "#334155", "tickfont": {"color": "#64748b"}},
+                        "axis": {"range": [0, 35000], "tickcolor": "#334155", "tickfont": {"color": "#64748b"}},
                         "bar": {"color": "#2563eb", "thickness": 0.28},
                         "bgcolor": "#131d2e",
                         "borderwidth": 0,
                         "steps": [
-                            {"range": [0, 16500], "color": "#0f2e1e"},
-                            {"range": [16500, 28000], "color": "#14253d"},
-                            {"range": [28000, 45000], "color": "#2e210f"},
-                            {"range": [45000, 70000], "color": "#331616"},
-                            {"range": [70000, 110000], "color": "#261738"},
+                            {"range": [0, 5000], "color": "#0f2e1e"},
+                            {"range": [5000, 8500], "color": "#14253d"},
+                            {"range": [8500, 13000], "color": "#2e210f"},
+                            {"range": [13000, 20000], "color": "#331616"},
+                            {"range": [20000, 35000], "color": "#261738"},
                         ],
                         "threshold": {
                             "line": {"color": "#3b82f6", "width": 3},
                             "thickness": 0.8,
-                            "value": fare_pkr,
+                            "value": fare_inr,
                         },
                     }
                 ))
@@ -698,13 +689,13 @@ with tab1:
                 )
                 st.plotly_chart(fig_gauge, use_container_width=True)
 
-                st.markdown("<div style='font-size:0.8rem; font-weight:700; color:#94a3b8; margin-bottom:6px;'>Domestic Fare Brackets (PKR):</div>", unsafe_allow_html=True)
+                st.markdown("<div style='font-size:0.8rem; font-weight:700; color:#94a3b8; margin-bottom:6px;'>Domestic Fare Brackets (INR):</div>", unsafe_allow_html=True)
                 brackets = [
-                    ("Saver Economy", "< Rs. 16,500", "#34d399"),
-                    ("Standard Economy", "Rs. 16,500 – 28,000", "#60a5fa"),
-                    ("Flexible Economy", "Rs. 28,000 – 45,000", "#fbbf24"),
-                    ("Premium Demand", "Rs. 45,000 – 70,000", "#f87171"),
-                    ("Business / Luxury", "> Rs. 70,000", "#c084fc"),
+                    ("Saver Economy", "< ₹5,000", "#34d399"),
+                    ("Standard Economy", "₹5,000 – ₹8,500", "#60a5fa"),
+                    ("Flexible Economy", "₹8,500 – ₹13,000", "#fbbf24"),
+                    ("Premium Demand", "₹13,000 – ₹20,000", "#f87171"),
+                    ("Business / Luxury", "> ₹20,000", "#c084fc"),
                 ]
                 for b_name, b_rng, b_col in brackets:
                     is_current = (b_name == tier)
@@ -748,33 +739,33 @@ with tab2:
         m1, m2, m3, m4 = st.columns(4)
         m1.metric("Available Flights", f"{len(f_df):,}")
         m2.metric("Active Carriers", str(f_df['Airline'].nunique()))
-        m3.metric("Average Fare (PKR)", f"Rs. {f_df['Price_PKR'].mean():,.0f}")
-        m4.metric("Fare Range (PKR)", f"Rs. {f_df['Price_PKR'].min():,.0f} – {f_df['Price_PKR'].max():,.0f}")
+        m3.metric("Average Fare (INR)", f"₹{f_df['Price'].mean():,.0f}")
+        m4.metric("Fare Range (INR)", f"₹{f_df['Price'].min():,} – ₹{f_df['Price'].max():,}")
 
         st.markdown("<br>", unsafe_allow_html=True)
-        display_cols = ['Airline', 'Source', 'Destination', 'Total_Stops', 'Duration', 'Price_PKR']
-        st.dataframe(f_df[display_cols].rename(columns={'Price_PKR': 'Price (PKR)'}).head(12), use_container_width=True, height=270)
+        display_cols = ['Airline', 'Source', 'Destination', 'Total_Stops', 'Duration', 'Price']
+        st.dataframe(f_df[display_cols].rename(columns={'Price': 'Price (₹)'}).head(12), use_container_width=True, height=270)
 
         st.markdown("<br>", unsafe_allow_html=True)
-        st.markdown("##### Market Visualizations (All values in PKR)")
+        st.markdown("##### Market Visualizations (INR ₹)")
 
         chart_c1, chart_c2 = st.columns(2)
         with chart_c1:
             fig_hist = px.histogram(
-                f_df, x='Price_PKR', nbins=40,
-                title="Fare Distribution (PKR)",
-                labels={'Price_PKR': 'Ticket Price (PKR)'},
+                f_df, x='Price', nbins=40,
+                title="Fare Distribution (₹)",
+                labels={'Price': 'Ticket Price (₹)'},
                 color_discrete_sequence=['#2563eb']
             )
             fig_hist.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font_color='#94a3b8')
             st.plotly_chart(fig_hist, use_container_width=True)
 
         with chart_c2:
-            carrier_avg = f_df.groupby('Airline')['Price_PKR'].mean().reset_index().sort_values('Price_PKR', ascending=False).head(8)
+            carrier_avg = f_df.groupby('Airline')['Price'].mean().reset_index().sort_values('Price', ascending=False).head(8)
             fig_bar = px.bar(
-                carrier_avg, x='Airline', y='Price_PKR',
-                title="Top 8 Airlines by Average Ticket Fare (PKR)",
-                labels={'Price_PKR': 'Average Fare (PKR)'},
+                carrier_avg, x='Airline', y='Price',
+                title="Top 8 Airlines by Average Ticket Fare (₹)",
+                labels={'Price': 'Average Fare (₹)'},
                 color_discrete_sequence=['#3b82f6']
             )
             fig_bar.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font_color='#94a3b8')
@@ -782,21 +773,21 @@ with tab2:
 
         chart_c3, chart_c4 = st.columns(2)
         with chart_c3:
-            stops_avg = f_df.groupby('Total_Stops')['Price_PKR'].mean().reset_index()
+            stops_avg = f_df.groupby('Total_Stops')['Price'].mean().reset_index()
             fig_stops = px.bar(
-                stops_avg, x='Total_Stops', y='Price_PKR',
-                title="Average Fare by Route Stops (PKR)",
-                labels={'Price_PKR': 'Average Fare (PKR)', 'Total_Stops': 'Stops'},
+                stops_avg, x='Total_Stops', y='Price',
+                title="Average Fare by Route Stops (₹)",
+                labels={'Price': 'Average Fare (₹)', 'Total_Stops': 'Stops'},
                 color_discrete_sequence=['#0ea5e9']
             )
             fig_stops.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font_color='#94a3b8')
             st.plotly_chart(fig_stops, use_container_width=True)
 
         with chart_c4:
-            src_dest = pd.crosstab(f_df['Source'], f_df['Destination'], values=f_df['Price_PKR'], aggfunc='mean').fillna(0)
+            src_dest = pd.crosstab(f_df['Source'], f_df['Destination'], values=f_df['Price'], aggfunc='mean').fillna(0)
             fig_heat = px.imshow(
                 src_dest, text_auto=",.0f",
-                title="Route Fare Matrix (PKR)",
+                title="Route Fare Matrix (₹)",
                 color_continuous_scale='Blues'
             )
             fig_heat.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font_color='#94a3b8')
@@ -809,7 +800,7 @@ with tab3:
     st.markdown("##### 10-Fold Cross-Validation Performance Leaderboard")
     st.markdown("""
     <div style="background:#131d2e; border:1px solid #1e2c42; border-radius:8px; padding:12px 16px; margin-bottom:1.2rem; font-size:0.86rem; color:#94a3b8;">
-      Evaluation across 10,682 verified flight instances using 10-fold cross-validation. All error metrics converted to Pakistani Rupee (PKR).
+      Evaluation across 10,682 verified flight instances using 10-fold cross-validation. All error metrics reported in Indian Rupee (INR ₹).
     </div>
     """, unsafe_allow_html=True)
 
@@ -819,7 +810,7 @@ with tab3:
         <div class="kpi-box" style="border-color:#2563eb; background:#0d1829;">
           <div style="font-size:1.6rem;">🥇</div>
           <div style="font-weight:700; color:#f8fafc; font-size:1.05rem; margin-top:2px;">Random Forest Regressor</div>
-          <div style="color:#60a5fa; font-weight:800; font-size:1.5rem; margin:4px 0;">RMSE: Rs. 6,809</div>
+          <div style="color:#60a5fa; font-weight:800; font-size:1.5rem; margin:4px 0;">RMSE: ₹2,051</div>
           <div style="font-size:0.75rem; color:#64748b;">R²: 0.8011 · 100 Estimators</div>
         </div>
         """, unsafe_allow_html=True)
@@ -828,7 +819,7 @@ with tab3:
         <div class="kpi-box" style="border-color:#334155;">
           <div style="font-size:1.6rem;">🥈</div>
           <div style="font-weight:700; color:#f8fafc; font-size:1.05rem; margin-top:2px;">Extra Trees Regressor</div>
-          <div style="color:#94a3b8; font-weight:800; font-size:1.5rem; margin:4px 0;">RMSE: Rs. 7,472</div>
+          <div style="color:#94a3b8; font-weight:800; font-size:1.5rem; margin:4px 0;">RMSE: ₹2,251</div>
           <div style="font-size:0.75rem; color:#64748b;">R²: 0.7601 · 100 Estimators</div>
         </div>
         """, unsafe_allow_html=True)
@@ -837,7 +828,7 @@ with tab3:
         <div class="kpi-box" style="border-color:#334155;">
           <div style="font-size:1.6rem;">🥉</div>
           <div style="font-weight:700; color:#f8fafc; font-size:1.05rem; margin-top:2px;">SVR (RBF Kernel)</div>
-          <div style="color:#94a3b8; font-weight:800; font-size:1.5rem; margin:4px 0;">RMSE: Rs. 10,474</div>
+          <div style="color:#94a3b8; font-weight:800; font-size:1.5rem; margin:4px 0;">RMSE: ₹3,155</div>
           <div style="font-size:0.75rem; color:#64748b;">R²: 0.5314 · Scaled C=100</div>
         </div>
         """, unsafe_allow_html=True)
@@ -849,7 +840,7 @@ with tab3:
         "Rank": ["1st", "2nd", "3rd", "4th", "5th"],
         "Algorithm": ["Random Forest Regressor", "Extra Trees Regressor", "SVR (RBF Kernel)", "Ridge Regression", "Lasso Regression"],
         "Category": ["Bagged Decision Trees", "Extremely Randomized Trees", "Support Vector Machine", "L2 Regularized Linear", "L1 Regularized Linear"],
-        "10-Fold CV RMSE (PKR)": ["Rs. 6,809.28", "Rs. 7,472.39", "Rs. 10,473.54", "Rs. 11,437.40", "Rs. 11,437.40"],
+        "10-Fold CV RMSE (INR)": ["₹2,050.99", "₹2,250.72", "₹3,154.68", "₹3,445.00", "₹3,445.00"],
         "R² Score": ["0.8011", "0.7601", "0.5314", "0.4408", "0.4408"],
         "Configuration": [
             "n_estimators=100, max_features='sqrt'",
@@ -866,23 +857,23 @@ with tab3:
 
     sim_df = pd.DataFrame({
         "Model": ["Random Forest Regressor", "Extra Trees Regressor", "SVR (RBF Kernel)", "Ridge Regression", "Lasso Regression"],
-        "RMSE_PKR": [6809.28, 7472.39, 10473.54, 11437.40, 11437.40],
+        "RMSE_INR": [2050.99, 2250.72, 3154.68, 3445.00, 3445.00],
     })
 
     fig_rmse = go.Figure()
     fig_rmse.add_trace(go.Bar(
         y=sim_df["Model"],
-        x=sim_df["RMSE_PKR"],
+        x=sim_df["RMSE_INR"],
         orientation='h',
         marker_color=['#2563eb', '#3b82f6', '#64748b', '#475569', '#334155'],
-        text=[f"Rs. {v:,.0f}" for v in sim_df["RMSE_PKR"]],
+        text=[f"₹{v:,.0f}" for v in sim_df["RMSE_INR"]],
         textposition='outside',
     ))
     fig_rmse.update_layout(
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
         font_color='#94a3b8',
-        xaxis_title="Cross-Validation RMSE in Pakistani Rupee (PKR)",
+        xaxis_title="Cross-Validation RMSE in Indian Rupee (INR ₹)",
         yaxis=dict(autorange='reversed'),
         height=300,
         margin=dict(l=10, r=80, t=10, b=40),
@@ -894,6 +885,6 @@ st.markdown("---")
 st.markdown("""
 <div style="text-align:center; color:#64748b; font-size:0.78rem; padding: 0.8rem 0 1.2rem;">
   <strong>SkyFare Commercial Airline Price Portal · AIC354 ML Fundamentals Lab 3</strong><br>
-  Calibrated on 10,683 Domestic Flights · Currency: Pakistani Rupee (PKR)
+  Calibrated on 10,683 Domestic Flights · Currency: Indian Rupee (INR ₹)
 </div>
 """, unsafe_allow_html=True)
