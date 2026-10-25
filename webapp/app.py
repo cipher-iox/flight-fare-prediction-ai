@@ -132,17 +132,17 @@ def predict():
 
         fare_inr = max(1500, round(raw_pred))
 
-        # Tier calculation in INR
+        # Tier calculation in INR (Sandy & Earth Tones - NO NEON)
         if fare_inr < 5000:
-            tier, color = "Saver Economy", "#10b981"
+            tier, color = "Saver Economy", "#cbb592"
         elif fare_inr < 8500:
-            tier, color = "Standard Economy", "#3b82f6"
+            tier, color = "Standard Economy", "#dfcfbe"
         elif fare_inr < 13000:
-            tier, color = "Flexible Economy", "#f59e0b"
+            tier, color = "Flexible Economy", "#e8caa0"
         elif fare_inr < 20000:
-            tier, color = "Premium Fare", "#ef4444"
+            tier, color = "Premium Fare", "#dfa497"
         else:
-            tier, color = "Business / Luxury", "#a855f7"
+            tier, color = "Business / Luxury", "#d0aede"
 
         return jsonify({
             'fare': fare_inr,

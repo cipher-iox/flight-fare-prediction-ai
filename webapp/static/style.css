@@ -1,16 +1,19 @@
 :root {
-  --bg-main: #f4f6f8;
-  --bg-card: #ffffff;
-  --border-color: #e2e8f0;
-  --border-input: #cbd5e1;
-  --primary: #0066cc;
-  --primary-hover: #0052a3;
-  --navy-header: #0a2540;
-  --text-main: #0f172a;
-  --text-muted: #64748b;
-  --radius-lg: 10px;
-  --radius-md: 8px;
-  --radius-sm: 6px;
+  --bg-main: #121212;
+  --bg-card: #191816;
+  --bg-surface: #151412;
+  --border-color: #332f28;
+  --border-input: #423d34;
+  --primary: #cbb592;
+  --primary-hover: #dfcfbe;
+  --text-main: #f5efe6;
+  --text-muted: #8f8375;
+  --text-body: #dfcfbe;
+  --sand-badge-bg: #26231e;
+  --sand-badge-border: #4a4235;
+  --radius-lg: 8px;
+  --radius-md: 6px;
+  --radius-sm: 4px;
 }
 
 * {
@@ -35,8 +38,8 @@ body {
 
 /* Header */
 .header {
-  border-bottom: 1px solid #1e3a5f;
-  background: var(--navy-header);
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-surface);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -57,19 +60,19 @@ body {
 
 .brand-icon {
   font-size: 1.5rem;
-  color: #38bdf8;
+  color: var(--primary);
 }
 
 .brand-title {
   font-size: 1.25rem;
   font-weight: 800;
-  color: #ffffff;
+  color: var(--text-main);
   letter-spacing: -0.3px;
 }
 
 .brand-sub {
   font-size: 0.74rem;
-  color: #94a3b8;
+  color: var(--text-muted);
 }
 
 .header-badges {
@@ -85,30 +88,30 @@ body {
 }
 
 .badge-accent {
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  color: #e0f2fe;
+  background: var(--sand-badge-bg);
+  border: 1px solid var(--sand-badge-border);
+  color: var(--primary);
 }
 
 .badge-subtle {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #cbd5e1;
+  background: var(--sand-badge-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
 }
 
 /* Hero */
 .hero {
-  padding: 2.4rem 0 1.4rem;
+  padding: 2.4rem 0 1.6rem;
   text-align: center;
-  background: #ffffff;
+  background: var(--bg-card);
   border-bottom: 1px solid var(--border-color);
   margin-bottom: 2rem;
 }
 
 .hero-tag {
   display: inline-block;
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
+  background: var(--sand-badge-bg);
+  border: 1px solid var(--sand-badge-border);
   color: var(--primary);
   padding: 3px 12px;
   border-radius: 4px;
@@ -122,7 +125,7 @@ body {
 .hero-title {
   font-size: 2.2rem;
   font-weight: 800;
-  color: var(--navy-header);
+  color: var(--text-main);
   letter-spacing: -0.5px;
   margin-bottom: 0.4rem;
 }
@@ -143,18 +146,17 @@ body {
 }
 
 .kpi-card {
-  background: #ffffff;
+  background: var(--bg-surface);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   padding: 1.1rem;
   text-align: center;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .kpi-val {
   font-size: 1.55rem;
   font-weight: 800;
-  color: var(--navy-header);
+  color: var(--primary);
   letter-spacing: -0.5px;
 }
 
@@ -186,7 +188,6 @@ body {
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   padding: 1.6rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .card-header {
@@ -204,7 +205,7 @@ body {
 .card-header h2 {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--navy-header);
+  color: var(--text-main);
   margin-top: 2px;
 }
 
@@ -231,11 +232,11 @@ body {
 label {
   font-size: 0.82rem;
   font-weight: 600;
-  color: #334155;
+  color: var(--text-body);
 }
 
 .form-control {
-  background: #ffffff;
+  background: var(--bg-surface);
   border: 1px solid var(--border-input);
   border-radius: var(--radius-sm);
   padding: 9px 12px;
@@ -243,12 +244,11 @@ label {
   font-size: 0.9rem;
   font-family: inherit;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.2s;
 }
 
 .form-control:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.12);
 }
 
 .hint {
@@ -259,53 +259,52 @@ label {
 .btn-primary {
   width: 100%;
   background: var(--primary);
-  color: #ffffff;
-  border: none;
+  color: #121212;
+  border: 1px solid var(--primary);
   border-radius: var(--radius-sm);
   padding: 11px;
   font-size: 0.95rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   margin-top: 0.8rem;
-  box-shadow: 0 1px 3px rgba(0, 102, 204, 0.25);
-  transition: background-color 0.15s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
 .btn-primary:hover {
   background: var(--primary-hover);
+  border-color: var(--primary-hover);
 }
 
 /* Ticket Display */
 .placeholder-box {
   border: 1px dashed var(--border-input);
-  background: #fafbfc;
+  background: var(--bg-surface);
   border-radius: var(--radius-md);
   padding: 3rem 1.5rem;
   text-align: center;
 }
 
 .ticket-box {
-  background: #ffffff;
+  background: var(--bg-surface);
   border: 1px solid var(--border-color);
-  border-top: 4px solid var(--primary);
+  border-top: 3px solid var(--primary);
   border-radius: var(--radius-md);
   padding: 1.5rem;
   margin-bottom: 1.2rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .ticket-header-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px dashed var(--border-input);
+  border-bottom: 1px dashed var(--border-color);
   padding-bottom: 1rem;
 }
 
 .route-city-code {
   font-size: 1.15rem;
   font-weight: 800;
-  color: var(--navy-header);
+  color: var(--text-main);
 }
 
 .route-label {
@@ -330,7 +329,7 @@ label {
 .fare-amount {
   font-size: 2.8rem;
   font-weight: 800;
-  color: var(--navy-header);
+  color: var(--text-main);
   line-height: 1.1;
   margin: 0.2rem 0;
   letter-spacing: -1px;
@@ -360,7 +359,7 @@ label {
 }
 
 .res-stat {
-  background: #f8fafc;
+  background: var(--bg-surface);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   padding: 9px 12px;
@@ -375,22 +374,22 @@ label {
 .res-stat-val {
   font-size: 0.95rem;
   font-weight: 700;
-  color: var(--navy-header);
+  color: var(--text-main);
 }
 
 .recommendation-box {
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
+  background: #201e19;
+  border: 1px solid #3d382f;
   border-left: 4px solid var(--primary);
   padding: 10px 14px;
   border-radius: 4px;
   font-size: 0.84rem;
-  color: #1e40af;
+  color: var(--text-body);
   line-height: 1.5;
 }
 
 .footer {
-  background: #ffffff;
+  background: var(--bg-main);
   border-top: 1px solid var(--border-color);
   padding: 1.4rem 0;
   text-align: center;
