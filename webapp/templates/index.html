@@ -3,28 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Flight Fare Predictor | AI Airfare Intelligence</title>
-  <meta name="description" content="Predict domestic flight ticket fares using 10-Fold Cross-Validated Machine Learning algorithms trained on 10,683 real-world flight records." />
+  <title>SkyFare | Commercial Airline Price Index</title>
+  <meta name="description" content="Commercial flight fare estimation and analytics platform. Calibrated on 10,683 flight records across primary domestic hubs." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 </head>
 <body>
-  <div class="bg-glow"></div>
-
   <!-- Header -->
   <header class="header">
     <div class="container header-inner">
       <div class="brand">
-        <span class="brand-icon">✈️</span>
+        <span class="brand-icon">✈</span>
         <div>
-          <div class="brand-title">AeroPrice AI</div>
-          <div class="brand-sub">Flight Fare Intelligence & Estimation</div>
+          <div class="brand-title">SkyFare Portal</div>
+          <div class="brand-sub">Commercial Flight Pricing & Market Analytics</div>
         </div>
       </div>
       <div class="header-badges">
-        <span class="badge badge-accent">Model: <strong>{{ model_name }}</strong></span>
-        <span class="badge badge-subtle">10,683 Flights · 10-Fold CV</span>
+        <span class="badge badge-accent">Engine: <strong>{{ model_name }}</strong></span>
+        <span class="badge badge-subtle">Currency: <strong>PKR (Rs.)</strong></span>
       </div>
     </div>
   </header>
@@ -32,32 +30,28 @@
   <!-- Hero Section -->
   <section class="hero">
     <div class="container hero-content">
-      <div class="hero-tag">⚡ AIC354 Machine Learning Fundamentals · Assignment 3</div>
-      <h1 class="hero-title">Intelligent Flight Fare Predictor</h1>
+      <div class="hero-tag">Commercial Aviation Market · Lab 3</div>
+      <h1 class="hero-title">Domestic Flight Fare Estimator</h1>
       <p class="hero-desc">
-        Calculate accurate flight ticket prices powered by evaluated machine learning regression models trained on India's primary domestic flight routes.
+        Calculate accurate flight ticket pricing calibrated on verified airline itineraries across primary domestic corridors. All fares displayed in Pakistani Rupee (PKR).
       </p>
 
       <div class="kpi-grid">
         <div class="kpi-card">
-          <div class="kpi-icon">📊</div>
           <div class="kpi-val">10,683</div>
-          <div class="kpi-label">Flight Records</div>
+          <div class="kpi-label">Flight Itineraries</div>
         </div>
         <div class="kpi-card">
-          <div class="kpi-icon">🔁</div>
-          <div class="kpi-val">10-Fold</div>
+          <div class="kpi-val">10 Folds</div>
           <div class="kpi-label">Cross-Validation</div>
         </div>
         <div class="kpi-card">
-          <div class="kpi-icon">🤖</div>
-          <div class="kpi-val">5</div>
-          <div class="kpi-label">ML Algorithms</div>
+          <div class="kpi-val">5 Models</div>
+          <div class="kpi-label">Benchmarked Algorithms</div>
         </div>
         <div class="kpi-card">
-          <div class="kpi-icon">🎯</div>
-          <div class="kpi-val">RMSE</div>
-          <div class="kpi-label">Evaluation Metric</div>
+          <div class="kpi-val">Rs. 30,170</div>
+          <div class="kpi-label">Average Route Fare (PKR)</div>
         </div>
       </div>
     </div>
@@ -68,14 +62,14 @@
     <!-- Form Card -->
     <div class="card form-card">
       <div class="card-header">
-        <span class="card-badge">Flight Parameters</span>
-        <h2>Trip & Itinerary Specifications</h2>
+        <span class="card-badge">Flight Search</span>
+        <h2>Itinerary Parameters</h2>
       </div>
 
       <form id="fare-form">
         <div class="form-row">
           <div class="form-group">
-            <label for="airline">✈️ Airline</label>
+            <label for="airline">Operating Airline</label>
             <select id="airline" name="airline" class="form-control" required>
               {% for a in airlines %}
               <option value="{{ a }}" {% if a == 'IndiGo' %}selected{% endif %}>{{ a }}</option>
@@ -84,7 +78,7 @@
           </div>
 
           <div class="form-group">
-            <label for="stops">🛑 Total Stops</label>
+            <label for="stops">Route Routing</label>
             <select id="stops" name="total_stops" class="form-control" required>
               {% for s in stops %}
               <option value="{{ s.value }}">{{ s.label }}</option>
@@ -95,7 +89,7 @@
 
         <div class="form-row">
           <div class="form-group">
-            <label for="source">🛫 Source City</label>
+            <label for="source">Origin Airport</label>
             <select id="source" name="source" class="form-control" required>
               {% for s in sources %}
               <option value="{{ s }}" {% if s == 'Banglore' %}selected{% endif %}>{{ s }}</option>
@@ -104,7 +98,7 @@
           </div>
 
           <div class="form-group">
-            <label for="destination">🛬 Destination City</label>
+            <label for="destination">Destination Airport</label>
             <select id="destination" name="destination" class="form-control" required>
               {% for d in destinations %}
               <option value="{{ d }}" {% if d == 'Delhi' %}selected{% endif %}>{{ d }}</option>
@@ -115,12 +109,12 @@
 
         <div class="form-row">
           <div class="form-group">
-            <label for="journey_date">📅 Date of Journey</label>
-            <input type="date" id="journey_date" name="journey_date" class="form-control" value="2024-05-15" required />
+            <label for="journey_date">Travel Date</label>
+            <input type="date" id="journey_date" name="journey_date" class="form-control" value="2024-06-15" required />
           </div>
 
           <div class="form-group">
-            <label for="duration_mins">⏱️ Flight Duration (minutes)</label>
+            <label for="duration_mins">Duration (minutes)</label>
             <input type="number" id="duration_mins" name="duration_mins" class="form-control" value="170" min="30" max="2400" required />
             <span class="hint" id="duration-hint">Approx. 2h 50m</span>
           </div>
@@ -128,19 +122,19 @@
 
         <div class="form-row">
           <div class="form-group">
-            <label for="dep_time">⏰ Departure Time</label>
+            <label for="dep_time">Departure Time</label>
             <input type="time" id="dep_time" name="dep_time" class="form-control" value="10:30" required />
           </div>
 
           <div class="form-group">
-            <label for="arrival_time">🛬 Arrival Time</label>
+            <label for="arrival_time">Arrival Time</label>
             <input type="time" id="arrival_time" name="arrival_time" class="form-control" value="13:20" required />
           </div>
         </div>
 
         <button type="submit" id="btn-submit" class="btn btn-primary">
-          <span class="btn-text">🔮 Calculate Estimated Fare</span>
-          <span class="btn-loader" style="display:none;">⏳ Computing...</span>
+          <span class="btn-text">Check Estimated Fare</span>
+          <span class="btn-loader" style="display:none;">Calculating...</span>
         </button>
       </form>
     </div>
@@ -148,39 +142,53 @@
     <!-- Output Card -->
     <div class="card result-card">
       <div class="card-header">
-        <span class="card-badge">Instant Valuation</span>
-        <h2>Estimated Airfare</h2>
+        <span class="card-badge">Fare Estimate</span>
+        <h2>Ticket Valuation</h2>
       </div>
 
       <div id="result-placeholder" class="placeholder-box">
-        <div style="font-size: 3rem; margin-bottom: 0.8rem;">🛫</div>
-        <div style="font-size: 1.1rem; font-weight: 700; color: #f8fafc;">Awaiting Flight Specifications</div>
-        <p style="color: #64748b; font-size: 0.88rem; max-width: 320px; margin: 0.5rem auto 0;">
-          Select your departure city, destination, and travel date, then click calculate to forecast ticket fare.
+        <div style="font-size: 2.4rem; margin-bottom: 0.8rem; color: #3b82f6;">✈</div>
+        <div style="font-size: 1.05rem; font-weight: 700; color: #f8fafc;">Select Route & Dates</div>
+        <p style="color: #64748b; font-size: 0.86rem; max-width: 320px; margin: 0.5rem auto 0;">
+          Configure your departure city and preferred carrier, then click to view expected fare in Pakistani Rupee (PKR).
         </p>
       </div>
 
       <div id="result-display" style="display: none;">
-        <div class="fare-hero" id="fare-hero">
-          <div class="fare-route" id="res-route">Banglore ➔ Delhi</div>
-          <div class="fare-amount" id="res-fare">₹7,450</div>
-          <div class="fare-sub" id="res-usd">Approx. $89.20 USD</div>
-          <div class="badge-tier" id="res-tier">ECONOMY STANDARD</div>
+        <div class="ticket-box" id="ticket-box">
+          <div class="ticket-header-row">
+            <div>
+              <div class="route-city-code" id="res-source">Banglore</div>
+              <div class="route-label">Origin</div>
+            </div>
+            <div class="route-plane">✈</div>
+            <div style="text-align: right;">
+              <div class="route-city-code" id="res-destination">Delhi</div>
+              <div class="route-label">Destination</div>
+            </div>
+          </div>
+
+          <div style="text-align: center; margin: 1.5rem 0 0.8rem;">
+            <div class="ticket-sublabel">Total Estimated Fare (PKR)</div>
+            <div class="fare-amount" id="res-fare">Rs. 24,750</div>
+            <div class="fare-usd" id="res-usd">Approx. $88.90 USD</div>
+            <div class="badge-tier" id="res-tier">STANDARD ECONOMY</div>
+          </div>
         </div>
 
         <div class="result-breakdown">
           <div class="res-stat">
-            <div class="res-stat-label">Airline Carrier</div>
+            <div class="res-stat-label">Operating Airline</div>
             <div class="res-stat-val" id="res-airline">IndiGo</div>
           </div>
           <div class="res-stat">
-            <div class="res-stat-label">Predictive Engine</div>
-            <div class="res-stat-val" id="res-model">Extra Trees</div>
+            <div class="res-stat-label">Calibrated Model</div>
+            <div class="res-stat-val" id="res-model">Random Forest</div>
           </div>
         </div>
 
         <div class="recommendation-box" id="recommendation-text">
-          💡 <strong>Booking Tip:</strong> Fares on this route typically rise closer to departure. Mid-week flights (Tuesday & Wednesday) offer optimal savings.
+          <strong>Market Tip:</strong> Fares on domestic routes generally follow demand curves. Booking 2–3 weeks in advance typically yields standard economy pricing.
         </div>
       </div>
     </div>
@@ -188,7 +196,7 @@
 
   <footer class="footer">
     <div class="container footer-text">
-      AIC354 Machine Learning Fundamentals · Assignment 3 · Flight Fare Intelligence System
+      SkyFare Portal · AIC354 Machine Learning Fundamentals Lab 3 · Currency: Pakistani Rupee (PKR)
     </div>
   </footer>
 
@@ -223,7 +231,7 @@
         total_stops: parseInt(document.getElementById('stops').value),
         journey_day: jDate.getDate(),
         journey_month: jDate.getMonth() + 1,
-        journey_dayofweek: (jDate.getDay() + 6) % 7, // 0 = Mon
+        journey_dayofweek: (jDate.getDay() + 6) % 7,
         dep_hour: parseInt(depTime[0]),
         dep_min: parseInt(depTime[1]),
         arrival_hour: parseInt(arrTime[0]),
@@ -246,9 +254,10 @@
           const disp = document.getElementById('result-display');
           disp.style.display = 'block';
 
-          document.getElementById('res-fare').textContent = '₹' + data.fare.toLocaleString();
+          document.getElementById('res-fare').textContent = data.fare_formatted;
           document.getElementById('res-usd').textContent = `Approx. $${data.fare_usd} USD`;
-          document.getElementById('res-route').textContent = data.route;
+          document.getElementById('res-source').textContent = document.getElementById('source').value;
+          document.getElementById('res-destination').textContent = document.getElementById('destination').value;
           document.getElementById('res-airline').textContent = data.airline;
           document.getElementById('res-model').textContent = data.model_used;
 
@@ -257,11 +266,9 @@
           tierElem.style.borderColor = data.color;
           tierElem.style.color = data.color;
           tierElem.style.background = data.color + '22';
-
-          document.getElementById('fare-hero').style.borderColor = data.color;
         }
       } catch (err) {
-        alert('Failed to connect to predictive engine.');
+        alert('Failed to connect to estimation service.');
       } finally {
         btn.disabled = false;
         document.querySelector('.btn-text').style.display = 'inline';

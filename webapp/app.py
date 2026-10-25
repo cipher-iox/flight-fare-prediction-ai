@@ -130,28 +130,30 @@ def predict():
             input_arr = np.array([list(row_dict.values())])
             raw_pred = float(model.predict(input_arr)[0])
 
-        fare = max(1500, round(raw_pred))
+        INR_TO_PKR = 3.32
+        fare_pkr = max(5000, round(raw_pred * INR_TO_PKR))
 
-        # Tier calculation
-        if fare < 5000:
-            tier, color = "Super Saver / Budget", "#10b981"
-        elif fare < 8500:
-            tier, color = "Economy Standard", "#0284c7"
-        elif fare < 13000:
-            tier, color = "Standard Flexible", "#f59e0b"
-        elif fare < 20000:
+        # Tier calculation in PKR
+        if fare_pkr < 16500:
+            tier, color = "Saver Economy", "#10b981"
+        elif fare_pkr < 28000:
+            tier, color = "Standard Economy", "#3b82f6"
+        elif fare_pkr < 45000:
+            tier, color = "Flexible Economy", "#f59e0b"
+        elif fare_pkr < 70000:
             tier, color = "Premium Fare", "#ef4444"
         else:
-            tier, color = "Luxury / Business Class", "#8b5cf6"
+            tier, color = "Business / Luxury", "#a855f7"
 
         return jsonify({
-            'fare': fare,
-            'fare_usd': round(fare / 83.5, 2),
+            'fare': fare_pkr,
+            'fare_formatted': f"Rs. {fare_pkr:,}",
+            'fare_usd': round(fare_pkr / 278.5, 2),
             'tier': tier,
             'color': color,
             'airline': airline,
             'route': f"{source} ➔ {destination}",
-            'model_used': model_bundle.get('model_name', 'Trained Estimator'),
+            'model_used': model_bundle.get('model_name', 'Random Forest Regressor'),
         })
 
     except Exception as e:
