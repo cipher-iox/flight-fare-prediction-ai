@@ -159,5 +159,21 @@ def predict():
 
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=False)
+    # Guard against accidental execution by Streamlit Community Cloud runner
+    import sys
+    if any('streamlit' in arg.lower() for arg in sys.argv) or 'streamlit' in sys.modules:
+        import streamlit as st
+        st.set_page_config(page_title="Configuration Notice", page_icon="⚙️")
+        st.error("⚠️ **Incorrect Main File Path Detected on Streamlit Cloud**")
+        st.warning("""
+        You configured the Streamlit Cloud entrypoint to `webapp/app.py` (which is the Flask web server).
+        
+        ### 🛠️ How to fix in 10 seconds:
+        1. Click the **Manage app** menu (the 3 dots `⋮` at the bottom right).
+        2. Go to **Settings** ➔ **General**.
+        3. Change **Main file path** from `webapp/app.py` to **`app.py`**.
+        4. Click **Save** — your full Streamlit UI will load instantly!
+        """)
+    else:
+        port = int(os.environ.get('PORT', 5000))
+        app.run(host='0.0.0.0', port=port, debug=False)
