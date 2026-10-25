@@ -16,12 +16,12 @@
       <div class="brand">
         <span class="brand-icon">✈</span>
         <div>
-          <div class="brand-title">SkyFare Portal</div>
-          <div class="brand-sub">Commercial Flight Pricing & Market Analytics</div>
+          <div class="brand-title">SkyFare</div>
+          <div class="brand-sub">Domestic Flight Fare Index & Calculator</div>
         </div>
       </div>
       <div class="header-badges">
-        <span class="badge badge-accent">Engine: <strong>{{ model_name }}</strong></span>
+        <span class="badge badge-accent">Model: <strong>{{ model_name }}</strong></span>
         <span class="badge badge-subtle">Currency: <strong>INR (₹)</strong></span>
       </div>
     </div>
@@ -30,10 +30,10 @@
   <!-- Hero Section -->
   <section class="hero">
     <div class="container hero-content">
-      <div class="hero-tag">Commercial Aviation Market · Lab 3</div>
-      <h1 class="hero-title">Domestic Flight Fare Estimator</h1>
+      <div class="hero-tag">Domestic Aviation Pricing</div>
+      <h1 class="hero-title">Domestic Flight Fare Calculator</h1>
       <p class="hero-desc">
-        Calculate accurate flight ticket pricing calibrated on verified airline itineraries across primary domestic corridors. All fares displayed in Indian Rupee (INR ₹).
+        Search and estimate commercial airline ticket pricing across primary domestic routes based on verified historical flight itineraries. All fares displayed in Indian Rupee (INR ₹).
       </p>
 
       <div class="kpi-grid">
@@ -43,11 +43,11 @@
         </div>
         <div class="kpi-card">
           <div class="kpi-val">10 Folds</div>
-          <div class="kpi-label">Cross-Validation</div>
+          <div class="kpi-label">Validation Protocol</div>
         </div>
         <div class="kpi-card">
           <div class="kpi-val">5 Models</div>
-          <div class="kpi-label">Benchmarked Algorithms</div>
+          <div class="kpi-label">Benchmarked Models</div>
         </div>
         <div class="kpi-card">
           <div class="kpi-val">₹9,087</div>
@@ -63,7 +63,7 @@
     <div class="card form-card">
       <div class="card-header">
         <span class="card-badge">Flight Search</span>
-        <h2>Itinerary Parameters</h2>
+        <h2>Route & Schedule Parameters</h2>
       </div>
 
       <form id="fare-form">
@@ -133,8 +133,8 @@
         </div>
 
         <button type="submit" id="btn-submit" class="btn btn-primary">
-          <span class="btn-text">Check Estimated Fare</span>
-          <span class="btn-loader" style="display:none;">Calculating...</span>
+          <span class="btn-text">Search Estimated Fare</span>
+          <span class="btn-loader" style="display:none;">Searching...</span>
         </button>
       </form>
     </div>
@@ -143,14 +143,14 @@
     <div class="card result-card">
       <div class="card-header">
         <span class="card-badge">Fare Estimate</span>
-        <h2>Ticket Valuation</h2>
+        <h2>Estimated Flight Fare</h2>
       </div>
 
       <div id="result-placeholder" class="placeholder-box">
-        <div style="font-size: 2.4rem; margin-bottom: 0.8rem; color: #3b82f6;">✈</div>
-        <div style="font-size: 1.05rem; font-weight: 700; color: #f8fafc;">Select Route & Dates</div>
+        <div style="font-size: 2rem; margin-bottom: 0.6rem; color: #0066cc;">✈</div>
+        <div style="font-size: 1.05rem; font-weight: 700; color: #0f172a;">Select Route & Schedule</div>
         <p style="color: #64748b; font-size: 0.86rem; max-width: 320px; margin: 0.5rem auto 0;">
-          Configure your departure city and preferred carrier, then click to view expected fare in Indian Rupee (INR ₹).
+          Select your departure city, destination, and preferred carrier, then click to view expected fare in Indian Rupee (INR ₹).
         </p>
       </div>
 
@@ -159,17 +159,17 @@
           <div class="ticket-header-row">
             <div>
               <div class="route-city-code" id="res-source">Banglore</div>
-              <div class="route-label">Origin</div>
+              <div class="route-label">Origin Airport</div>
             </div>
             <div class="route-plane">✈</div>
             <div style="text-align: right;">
               <div class="route-city-code" id="res-destination">Delhi</div>
-              <div class="route-label">Destination</div>
+              <div class="route-label">Destination Airport</div>
             </div>
           </div>
 
           <div style="text-align: center; margin: 1.5rem 0 0.8rem;">
-            <div class="ticket-sublabel">Total Estimated Fare (INR)</div>
+            <div class="ticket-sublabel">Estimated Total Base Fare (INR)</div>
             <div class="fare-amount" id="res-fare">₹7,450</div>
             <div class="fare-usd" id="res-usd">Approx. $89.20 USD</div>
             <div class="badge-tier" id="res-tier">STANDARD ECONOMY</div>
@@ -182,13 +182,13 @@
             <div class="res-stat-val" id="res-airline">IndiGo</div>
           </div>
           <div class="res-stat">
-            <div class="res-stat-label">Calibrated Model</div>
+            <div class="res-stat-label">Reference Model</div>
             <div class="res-stat-val" id="res-model">Random Forest</div>
           </div>
         </div>
 
         <div class="recommendation-box" id="recommendation-text">
-          <strong>Market Tip:</strong> Fares on domestic routes generally follow demand curves. Booking 2–3 weeks in advance typically yields standard economy pricing.
+          <strong>Booking Advisory:</strong> Domestic route fares follow seasonal demand curves. Booking 2–3 weeks in advance typically yields standard economy rates.
         </div>
       </div>
     </div>
@@ -196,7 +196,7 @@
 
   <footer class="footer">
     <div class="container footer-text">
-      SkyFare Portal · AIC354 Machine Learning Fundamentals Lab 3 · Currency: Indian Rupee (INR ₹)
+      SkyFare Domestic Flight Price Index · Calibrated on 10,683 Domestic Flights · Currency: Indian Rupee (INR ₹)
     </div>
   </footer>
 

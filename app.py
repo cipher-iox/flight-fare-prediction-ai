@@ -19,48 +19,60 @@ import plotly.express as px
 
 # ── Page Configuration ────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="SkyFare | Commercial Flight Price Estimator",
+    page_title="SkyFare | Domestic Flight Price Index",
     page_icon="✈️",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-# ── Professional Aviation Styling (Refined Navy & Slate Palette) ──────────────
+# ── Clean Commercial Airline Styling (Light Theme) ──────────────────────────
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 html, body, [class*="css"] { 
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; 
 }
 
-/* Background - Clean Dark Aviation Slate */
+/* Background - Clean Light Commercial Travel Canvas */
 .stApp {
-    background-color: #0c121e;
-    color: #e2e8f0;
+    background-color: #f4f6f8;
+    color: #0f172a;
 }
 
 #MainMenu, footer, header { visibility: hidden; }
 
-/* Clean Aviation Banner */
+/* Global typography */
+h1, h2, h3, h4, h5, h6, p, label {
+    color: #0f172a !important;
+}
+
+/* Sidebar */
+section[data-testid="stSidebar"] {
+    background-color: #ffffff !important;
+    border-right: 1px solid #e2e8f0 !important;
+}
+section[data-testid="stSidebar"] * {
+    color: #1e293b;
+}
+
+/* Clean Header Banner - Deep Aviation Navy */
 .portal-header {
-    background: #131d2e;
-    border: 1px solid #1e2c42;
-    border-radius: 12px;
+    background: #0a2540;
+    border-radius: 10px;
     padding: 1.8rem 2rem;
     margin-bottom: 1.5rem;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 8px rgba(10, 37, 64, 0.08);
 }
 .portal-badge {
     display: inline-block;
-    background: #1e3a5f;
-    color: #60a5fa;
-    border: 1px solid #2b4c7e;
-    padding: 3px 12px;
-    border-radius: 6px;
-    font-size: 0.76rem;
+    background: rgba(255, 255, 255, 0.15);
+    color: #e0f2fe;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 0.74rem;
     font-weight: 700;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.6px;
     text-transform: uppercase;
     margin-bottom: 0.6rem;
 }
@@ -73,29 +85,30 @@ html, body, [class*="css"] {
     line-height: 1.2;
 }
 .portal-desc {
-    color: #94a3b8;
-    font-size: 0.95rem;
+    color: #cbd5e1;
+    font-size: 0.94rem;
     margin-top: 0.5rem;
     max-width: 720px;
 }
 
 /* KPI Summary Cards */
 .kpi-box {
-    background: #131d2e;
-    border: 1px solid #1e2c42;
-    border-radius: 10px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
     padding: 1.1rem 1rem;
     text-align: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    transition: border-color 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    transition: all 0.2s ease;
 }
 .kpi-box:hover {
-    border-color: #2563eb;
+    border-color: #0066cc;
+    box-shadow: 0 4px 12px rgba(0,102,204,0.08);
 }
 .kpi-val {
     font-size: 1.6rem;
     font-weight: 800;
-    color: #f8fafc;
+    color: #0a2540;
     letter-spacing: -0.5px;
 }
 .kpi-lbl {
@@ -109,73 +122,76 @@ html, body, [class*="css"] {
 
 /* Flight Ticket Card Aesthetic */
 .ticket-card {
-    background: #131d2e;
-    border: 1px solid #1e2c42;
-    border-radius: 12px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-top: 4px solid #0066cc;
+    border-radius: 10px;
     padding: 1.8rem;
     margin-bottom: 1.5rem;
     position: relative;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 .ticket-route {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px dashed #24354f;
+    border-bottom: 1px dashed #cbd5e1;
     padding-bottom: 1.2rem;
     margin-bottom: 1.2rem;
 }
 .route-city {
     font-size: 1.3rem;
     font-weight: 800;
-    color: #f8fafc;
+    color: #0a2540;
 }
 .route-airline {
-    font-size: 0.85rem;
-    color: #94a3b8;
+    font-size: 0.82rem;
+    color: #64748b;
     font-weight: 600;
 }
 .flight-icon-center {
-    font-size: 1.4rem;
-    color: #3b82f6;
+    font-size: 1.3rem;
+    color: #0066cc;
 }
 .ticket-price-val {
     font-size: 3.2rem;
     font-weight: 800;
-    color: #ffffff;
+    color: #0a2540;
     line-height: 1;
     margin: 0.4rem 0 0.2rem;
     letter-spacing: -1px;
 }
 .ticket-price-sub {
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     color: #64748b;
     text-transform: uppercase;
     letter-spacing: 0.6px;
+    font-weight: 600;
 }
 
-/* Pill Badges */
+/* Deal Badge */
 .deal-badge {
     display: inline-block;
-    padding: 5px 14px;
-    border-radius: 6px;
-    font-size: 0.8rem;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 0.78rem;
     font-weight: 700;
     letter-spacing: 0.4px;
-    margin-top: 1rem;
+    margin-top: 0.8rem;
 }
 
 .pill-card {
-    background: #0d1522;
-    border: 1px solid #1e2c42;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
     border-radius: 8px;
     padding: 0.75rem 0.9rem;
     text-align: center;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
 }
 .pill-card-val {
     font-size: 1.15rem;
     font-weight: 700;
-    color: #f1f5f9;
+    color: #0a2540;
 }
 .pill-card-lbl {
     font-size: 0.7rem;
@@ -185,41 +201,35 @@ html, body, [class*="css"] {
     margin-top: 2px;
 }
 
-/* Sidebar */
-section[data-testid="stSidebar"] {
-    background-color: #0a0f1a;
-    border-right: 1px solid #1a2536;
-}
-
 /* Corporate Buttons */
 div.stButton > button:first-child {
-    background-color: #2563eb;
-    color: #ffffff;
-    border: none;
-    border-radius: 8px;
-    padding: 0.65rem 1.4rem;
-    font-weight: 600;
-    font-size: 0.95rem;
-    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
-    transition: background-color 0.2s ease;
+    background-color: #0066cc !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 6px !important;
+    padding: 0.6rem 1.2rem !important;
+    font-weight: 600 !important;
+    font-size: 0.92rem !important;
+    box-shadow: 0 1px 3px rgba(0, 102, 204, 0.2) !important;
+    transition: background-color 0.15s ease !important;
 }
 div.stButton > button:first-child:hover {
-    background-color: #1d4ed8;
-    color: #ffffff;
+    background-color: #0052a3 !important;
+    color: #ffffff !important;
 }
 
 /* Clean Tabs */
 .stTabs [data-baseweb="tab-list"] {
-    gap: 4px;
-    background-color: #111a28;
-    padding: 5px;
+    gap: 6px;
+    background-color: #e2e8f0;
+    padding: 4px;
     border-radius: 8px;
-    border: 1px solid #1e2c42;
+    border: 1px solid #cbd5e1;
 }
 .stTabs [data-baseweb="tab"] {
-    height: 40px;
+    height: 38px;
     border-radius: 6px;
-    color: #94a3b8;
+    color: #475569 !important;
     font-weight: 600;
     font-size: 0.88rem;
     padding: 0 16px;
@@ -227,9 +237,9 @@ div.stButton > button:first-child:hover {
     background: transparent;
 }
 .stTabs [aria-selected="true"] {
-    background: #1e293b !important;
-    color: #ffffff !important;
-    border: 1px solid #334155 !important;
+    background: #ffffff !important;
+    color: #0066cc !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08) !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -291,26 +301,26 @@ df = load_dataset()
 with st.sidebar:
     st.markdown("""
     <div style="display:flex; align-items:center; gap:10px; margin-bottom:1.2rem;">
-      <div style="font-size:1.6rem; color:#3b82f6;">✈️</div>
+      <div style="font-size:1.5rem; color:#0066cc;">✈</div>
       <div>
-        <div style="font-weight:800; font-size:1.15rem; color:#f8fafc; font-family:'Space Grotesk';">SkyFare Portal</div>
-        <div style="font-size:0.75rem; color:#64748b;">Flight Price Analytics</div>
+        <div style="font-weight:800; font-size:1.15rem; color:#0a2540;">SkyFare</div>
+        <div style="font-size:0.75rem; color:#64748b;">Flight Price Index</div>
       </div>
     </div>
     """, unsafe_allow_html=True)
 
     if model_bundle:
         st.markdown("""
-        <div style="background:#0e2017; border:1px solid #1b4d2e; border-radius:6px; padding:6px 10px; margin-bottom:1.2rem; display:flex; align-items:center; gap:8px;">
-          <span style="display:inline-block; width:7px; height:7px; border-radius:50%; background:#22c55e;"></span>
-          <span style="font-size:0.8rem; color:#4ade80; font-weight:600;">Pricing Engine Online</span>
+        <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:6px; padding:6px 10px; margin-bottom:1.2rem; display:flex; align-items:center; gap:8px;">
+          <span style="display:inline-block; width:7px; height:7px; border-radius:50%; background:#16a34a;"></span>
+          <span style="font-size:0.8rem; color:#166534; font-weight:600;">Pricing Service Active</span>
         </div>
         """, unsafe_allow_html=True)
     else:
         st.markdown("""
-        <div style="background:#221010; border:1px solid #4a1d1d; border-radius:6px; padding:6px 10px; margin-bottom:1.2rem; display:flex; align-items:center; gap:8px;">
-          <span style="display:inline-block; width:7px; height:7px; border-radius:50%; background:#ef4444;"></span>
-          <span style="font-size:0.8rem; color:#f87171; font-weight:600;">Model Offline</span>
+        <div style="background:#fef2f2; border:1px solid #fecaca; border-radius:6px; padding:6px 10px; margin-bottom:1.2rem; display:flex; align-items:center; gap:8px;">
+          <span style="display:inline-block; width:7px; height:7px; border-radius:50%; background:#dc2626;"></span>
+          <span style="font-size:0.8rem; color:#991b1b; font-weight:600;">Pricing Service Offline</span>
         </div>
         """, unsafe_allow_html=True)
 
@@ -336,31 +346,29 @@ with st.sidebar:
     fx_rate, curr_sym = curr_rates[currency]
 
     st.markdown("---")
-    st.markdown("#### System Overview")
+    st.markdown("#### Database Summary")
     st.markdown("""
-    - **Course:** AIC354 ML Fundamentals
-    - **Methodology:** 10-Fold Cross-Validation
-    - **Evaluated Dataset:** 10,683 Commercial Flights
+    - **Itinerary Records:** 10,683 Commercial Flights
+    - **Validation Protocol:** 10-Fold Cross-Validation
     - **Standard Currency:** Indian Rupee (INR ₹)
     """)
 
     if model_bundle:
         st.markdown("---")
-        st.markdown("#### Active Estimator")
-        st.markdown(f"**Model:** `{model_bundle.get('model_name', 'Random Forest Regressor')}`")
-        st.markdown(f"**Input Attributes:** `{len(model_bundle.get('features', []))}`")
+        st.markdown("#### Reference Model")
+        st.markdown(f"**Selected Model:** `{model_bundle.get('model_name', 'Random Forest Regressor')}`")
         if 'rmse' in model_bundle:
-            st.markdown(f"**CV Error (RMSE):** `₹{model_bundle['rmse']:,.2f}`")
+            st.markdown(f"**Validation RMSE:** `₹{model_bundle['rmse']:,.2f}`")
 
 # ══════════════════════════════════════════════════════════════════════════════
 # HEADER / BANNER
 # ══════════════════════════════════════════════════════════════════════════════
 st.markdown("""
 <div class="portal-header">
-  <div class="portal-badge">Commercial Aviation Analytics · Lab 3</div>
-  <h1 class="portal-title">Flight Fare Estimation & Price Index</h1>
+  <div class="portal-badge">Commercial Aviation Pricing</div>
+  <h1 class="portal-title">Domestic Flight Fare Search & Rate Index</h1>
   <p class="portal-desc">
-    Forecast commercial airline ticket pricing across primary domestic routes using 10-Fold cross-validated ensemble learning models calibrated on 10,683 verified travel itineraries.
+    Search, estimate, and compare commercial airline ticket pricing across primary domestic routes based on verified historical flight itineraries.
   </p>
 </div>
 """, unsafe_allow_html=True)
@@ -385,13 +393,13 @@ with k3:
     st.markdown("""
     <div class="kpi-box">
       <div class="kpi-val">5 Models</div>
-      <div class="kpi-lbl">Evaluated Algorithms</div>
+      <div class="kpi-lbl">Benchmarked Models</div>
     </div>""", unsafe_allow_html=True)
 with k4:
     st.markdown(f"""
     <div class="kpi-box">
       <div class="kpi-val">{curr_sym}{(avg_national_inr * fx_rate):,.0f}</div>
-      <div class="kpi-lbl">Average Ticket Fare</div>
+      <div class="kpi-lbl">Average Route Fare</div>
     </div>""", unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
@@ -399,7 +407,7 @@ st.markdown("<br>", unsafe_allow_html=True)
 # ══════════════════════════════════════════════════════════════════════════════
 # TABS
 # ══════════════════════════════════════════════════════════════════════════════
-tab1, tab2, tab3 = st.tabs(["✈️ Fare Estimator", "📊 Route & Market Data", "📈 Model Benchmarks"])
+tab1, tab2, tab3 = st.tabs(["Flight Fare Calculator", "Route & Carrier Trends", "Model Performance & Benchmarks"])
 
 # ══════════════════════════════════════════════════════════════════════════════
 # TAB 1 — FARE ESTIMATOR
@@ -522,7 +530,7 @@ with tab1:
             with ac2:
                 arr_min = st.number_input("Arrival Minute", 0, 59, int(st.session_state.f_arr_m), step=5)
 
-        submitted = st.form_submit_button("Calculate Estimated Fare", use_container_width=True)
+        submitted = st.form_submit_button("Search Estimated Fare", use_container_width=True)
 
     # ── Calculation & Display ─────────────────────────────────────────────────
     if submitted or 'last_inr_fare' in st.session_state:
@@ -573,23 +581,23 @@ with tab1:
             # Professional Fare Tiers in INR
             if fare_inr < 5000:
                 tier = "Saver Economy"
-                tier_bg, tier_fg = "#0f2e1e", "#34d399"
+                tier_bg, tier_fg = "#ecfdf5", "#059669"
                 advisory = "Highly competitive rate. Ideal for budget travelers; check cabin baggage limits."
             elif fare_inr < 8500:
                 tier = "Standard Economy"
-                tier_bg, tier_fg = "#14253d", "#60a5fa"
+                tier_bg, tier_fg = "#eff6ff", "#2563eb"
                 advisory = "Fair market price for domestic routes. Regular fare with standard seating."
             elif fare_inr < 13000:
                 tier = "Flexible Economy"
-                tier_bg, tier_fg = "#2e210f", "#fbbf24"
+                tier_bg, tier_fg = "#fffbeb", "#d97706"
                 advisory = "Elevated fare due to high route demand or proximity to departure date."
             elif fare_inr < 20000:
-                tier = "Premium / High Demand"
-                tier_bg, tier_fg = "#331616", "#f87171"
+                tier = "Peak Demand"
+                tier_bg, tier_fg = "#fef2f2", "#dc2626"
                 advisory = "Peak pricing. Flexible dates or early morning flights may provide substantial savings."
             else:
                 tier = "Business / Luxury Class"
-                tier_bg, tier_fg = "#261738", "#c084fc"
+                tier_bg, tier_fg = "#f5f3ff", "#7c3aed"
                 advisory = "Premium booking tier with priority services, flexible rescheduling, and extra baggage."
 
             disp_amount = fare_inr * fx_rate
@@ -616,9 +624,9 @@ with tab1:
                     </div>
                   </div>
                   <div style="text-align:center;">
-                    <div class="ticket-price-sub">Estimated Total Ticket Fare ({currency.split('—')[0].strip()})</div>
+                    <div class="ticket-price-sub">Estimated Total Base Fare ({currency.split('—')[0].strip()})</div>
                     <div class="ticket-price-val">{curr_sym}{disp_amount:,.0f}</div>
-                    <div style="font-size:0.85rem; color:#94a3b8; font-weight:600;">Carrier: {airline} · {total_stops} Stop{'s' if total_stops != 1 else ''}</div>
+                    <div style="font-size:0.85rem; color:#64748b; font-weight:600;">Carrier: {airline} · {total_stops} Stop{'s' if total_stops != 1 else ''}</div>
                     <div class="deal-badge" style="background:{tier_bg}; color:{tier_fg}; border:1px solid {tier_fg}44;">
                       {tier.upper()}
                     </div>
@@ -637,75 +645,75 @@ with tab1:
                     st.markdown(f"""
                     <div class="pill-card">
                       <div class="pill-card-val">{abs(diff_pct):.1f}% {diff_sign}</div>
-                      <div class="pill-card-lbl">vs National Route Avg</div>
+                      <div class="pill-card-lbl">vs Route Average</div>
                     </div>""", unsafe_allow_html=True)
                 with r_p3:
                     st.markdown(f"""
                     <div class="pill-card">
                       <div class="pill-card-val">{duration_hours}h {duration_minutes}m</div>
-                      <div class="pill-card-lbl">Flight Time</div>
+                      <div class="pill-card-lbl">Flight Duration</div>
                     </div>""", unsafe_allow_html=True)
 
                 st.markdown("<br>", unsafe_allow_html=True)
                 st.markdown(f"""
-                <div style="background:#131d2e; border-left:3px solid #2563eb; padding:12px 14px; border-radius:6px; font-size:0.86rem; color:#cbd5e1;">
+                <div style="background:#ffffff; border:1px solid #e2e8f0; border-left:4px solid #0066cc; padding:12px 14px; border-radius:6px; font-size:0.86rem; color:#334155;">
                   <strong>Booking Advisory:</strong> {advisory}
                 </div>""", unsafe_allow_html=True)
 
             with col_scale:
-                # Clean Price Gauge in INR
+                # Clean Price Gauge in INR (Light Theme)
                 fig_gauge = go.Figure(go.Indicator(
                     mode="gauge+number+delta",
                     value=fare_inr,
-                    title={"text": "Market Fare Benchmark (INR ₹)", "font": {"color": "#94a3b8", "size": 13}},
-                    number={"prefix": "₹", "valueformat": ",.0f", "font": {"color": "#f8fafc", "size": 30}},
+                    title={"text": "Market Fare Benchmark (INR ₹)", "font": {"color": "#64748b", "size": 13}},
+                    number={"prefix": "₹", "valueformat": ",.0f", "font": {"color": "#0a2540", "size": 30}},
                     delta={"reference": avg_national_inr, "relative": False,
-                           "decreasing": {"color": "#22c55e"}, "increasing": {"color": "#ef4444"}},
+                           "decreasing": {"color": "#059669"}, "increasing": {"color": "#dc2626"}},
                     gauge={
-                        "axis": {"range": [0, 35000], "tickcolor": "#334155", "tickfont": {"color": "#64748b"}},
-                        "bar": {"color": "#2563eb", "thickness": 0.28},
-                        "bgcolor": "#131d2e",
+                        "axis": {"range": [0, 35000], "tickcolor": "#cbd5e1", "tickfont": {"color": "#64748b"}},
+                        "bar": {"color": "#0066cc", "thickness": 0.28},
+                        "bgcolor": "#f1f5f9",
                         "borderwidth": 0,
                         "steps": [
-                            {"range": [0, 5000], "color": "#0f2e1e"},
-                            {"range": [5000, 8500], "color": "#14253d"},
-                            {"range": [8500, 13000], "color": "#2e210f"},
-                            {"range": [13000, 20000], "color": "#331616"},
-                            {"range": [20000, 35000], "color": "#261738"},
+                            {"range": [0, 5000], "color": "#d1fae5"},
+                            {"range": [5000, 8500], "color": "#dbeafe"},
+                            {"range": [8500, 13000], "color": "#fef3c7"},
+                            {"range": [13000, 20000], "color": "#fee2e2"},
+                            {"range": [20000, 35000], "color": "#ede9fe"},
                         ],
                         "threshold": {
-                            "line": {"color": "#3b82f6", "width": 3},
+                            "line": {"color": "#0066cc", "width": 3},
                             "thickness": 0.8,
                             "value": fare_inr,
                         },
                     }
                 ))
                 fig_gauge.update_layout(
-                    paper_bgcolor="rgba(0,0,0,0)",
-                    plot_bgcolor="rgba(0,0,0,0)",
-                    font={"color": "#f8fafc"},
+                    paper_bgcolor="#ffffff",
+                    plot_bgcolor="#ffffff",
+                    font={"color": "#0f172a"},
                     height=280,
                     margin=dict(l=15, r=15, t=40, b=0),
                 )
                 st.plotly_chart(fig_gauge, use_container_width=True)
 
-                st.markdown("<div style='font-size:0.8rem; font-weight:700; color:#94a3b8; margin-bottom:6px;'>Domestic Fare Brackets (INR):</div>", unsafe_allow_html=True)
+                st.markdown("<div style='font-size:0.8rem; font-weight:700; color:#475569; margin-bottom:6px;'>Domestic Fare Brackets (INR):</div>", unsafe_allow_html=True)
                 brackets = [
-                    ("Saver Economy", "< ₹5,000", "#34d399"),
-                    ("Standard Economy", "₹5,000 – ₹8,500", "#60a5fa"),
-                    ("Flexible Economy", "₹8,500 – ₹13,000", "#fbbf24"),
-                    ("Premium Demand", "₹13,000 – ₹20,000", "#f87171"),
-                    ("Business / Luxury", "> ₹20,000", "#c084fc"),
+                    ("Saver Economy", "< ₹5,000", "#059669"),
+                    ("Standard Economy", "₹5,000 – ₹8,500", "#2563eb"),
+                    ("Flexible Economy", "₹8,500 – ₹13,000", "#d97706"),
+                    ("Peak Demand", "₹13,000 – ₹20,000", "#dc2626"),
+                    ("Business / Luxury", "> ₹20,000", "#7c3aed"),
                 ]
                 for b_name, b_rng, b_col in brackets:
                     is_current = (b_name == tier)
-                    bg_style = f"background:#1e293b; border:1px solid {b_col};" if is_current else "background:#0f172a;"
+                    bg_style = f"background:#eff6ff; border:1px solid #93c5fd;" if is_current else "background:#ffffff; border:1px solid #e2e8f0;"
                     curr_mark = f"<span style='color:{b_col}; font-weight:700;'>Selected Route</span>" if is_current else ""
                     st.markdown(f"""
-                    <div style="display:flex; justify-content:space-between; align-items:center; padding:5px 10px; border-radius:6px; margin:3px 0; font-size:0.8rem; {bg_style}">
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 12px; border-radius:6px; margin:4px 0; font-size:0.8rem; {bg_style}">
                       <div style="display:flex; align-items:center; gap:8px;">
                         <span style="width:8px; height:8px; border-radius:50%; background:{b_col};"></span>
-                        <span style="color:#e2e8f0; font-weight:600;">{b_name}</span>
+                        <span style="color:#1e293b; font-weight:600;">{b_name}</span>
                         <span style="color:#64748b;">({b_rng})</span>
                       </div>
                       <div>{curr_mark}</div>
@@ -755,9 +763,9 @@ with tab2:
                 f_df, x='Price', nbins=40,
                 title="Fare Distribution (₹)",
                 labels={'Price': 'Ticket Price (₹)'},
-                color_discrete_sequence=['#2563eb']
+                color_discrete_sequence=['#0066cc']
             )
-            fig_hist.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font_color='#94a3b8')
+            fig_hist.update_layout(template='plotly_white', paper_bgcolor='#ffffff', plot_bgcolor='#ffffff', font_color='#1e293b')
             st.plotly_chart(fig_hist, use_container_width=True)
 
         with chart_c2:
@@ -766,9 +774,9 @@ with tab2:
                 carrier_avg, x='Airline', y='Price',
                 title="Top 8 Airlines by Average Ticket Fare (₹)",
                 labels={'Price': 'Average Fare (₹)'},
-                color_discrete_sequence=['#3b82f6']
+                color_discrete_sequence=['#0284c7']
             )
-            fig_bar.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font_color='#94a3b8')
+            fig_bar.update_layout(template='plotly_white', paper_bgcolor='#ffffff', plot_bgcolor='#ffffff', font_color='#1e293b')
             st.plotly_chart(fig_bar, use_container_width=True)
 
         chart_c3, chart_c4 = st.columns(2)
@@ -778,9 +786,9 @@ with tab2:
                 stops_avg, x='Total_Stops', y='Price',
                 title="Average Fare by Route Stops (₹)",
                 labels={'Price': 'Average Fare (₹)', 'Total_Stops': 'Stops'},
-                color_discrete_sequence=['#0ea5e9']
+                color_discrete_sequence=['#0369a1']
             )
-            fig_stops.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font_color='#94a3b8')
+            fig_stops.update_layout(template='plotly_white', paper_bgcolor='#ffffff', plot_bgcolor='#ffffff', font_color='#1e293b')
             st.plotly_chart(fig_stops, use_container_width=True)
 
         with chart_c4:
@@ -790,7 +798,7 @@ with tab2:
                 title="Route Fare Matrix (₹)",
                 color_continuous_scale='Blues'
             )
-            fig_heat.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font_color='#94a3b8')
+            fig_heat.update_layout(template='plotly_white', paper_bgcolor='#ffffff', plot_bgcolor='#ffffff', font_color='#1e293b')
             st.plotly_chart(fig_heat, use_container_width=True)
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -799,7 +807,7 @@ with tab2:
 with tab3:
     st.markdown("##### 10-Fold Cross-Validation Performance Leaderboard")
     st.markdown("""
-    <div style="background:#131d2e; border:1px solid #1e2c42; border-radius:8px; padding:12px 16px; margin-bottom:1.2rem; font-size:0.86rem; color:#94a3b8;">
+    <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:12px 16px; margin-bottom:1.2rem; font-size:0.86rem; color:#475569;">
       Evaluation across 10,682 verified flight instances using 10-fold cross-validation. All error metrics reported in Indian Rupee (INR ₹).
     </div>
     """, unsafe_allow_html=True)
@@ -807,28 +815,28 @@ with tab3:
     pod1, pod2, pod3 = st.columns(3)
     with pod1:
         st.markdown("""
-        <div class="kpi-box" style="border-color:#2563eb; background:#0d1829;">
-          <div style="font-size:1.6rem;">🥇</div>
-          <div style="font-weight:700; color:#f8fafc; font-size:1.05rem; margin-top:2px;">Random Forest Regressor</div>
-          <div style="color:#60a5fa; font-weight:800; font-size:1.5rem; margin:4px 0;">RMSE: ₹2,051</div>
+        <div class="kpi-box" style="border-top:3px solid #0066cc;">
+          <div style="display:inline-block; background:#eff6ff; color:#0066cc; font-size:0.75rem; font-weight:700; padding:2px 8px; border-radius:4px; margin-bottom:4px;">Rank #1 · Selected Model</div>
+          <div style="font-weight:700; color:#0a2540; font-size:1.05rem; margin-top:2px;">Random Forest Regressor</div>
+          <div style="color:#0066cc; font-weight:800; font-size:1.5rem; margin:4px 0;">RMSE: ₹2,051</div>
           <div style="font-size:0.75rem; color:#64748b;">R²: 0.8011 · 100 Estimators</div>
         </div>
         """, unsafe_allow_html=True)
     with pod2:
         st.markdown("""
-        <div class="kpi-box" style="border-color:#334155;">
-          <div style="font-size:1.6rem;">🥈</div>
-          <div style="font-weight:700; color:#f8fafc; font-size:1.05rem; margin-top:2px;">Extra Trees Regressor</div>
-          <div style="color:#94a3b8; font-weight:800; font-size:1.5rem; margin:4px 0;">RMSE: ₹2,251</div>
+        <div class="kpi-box" style="border-top:3px solid #94a3b8;">
+          <div style="display:inline-block; background:#f1f5f9; color:#475569; font-size:0.75rem; font-weight:700; padding:2px 8px; border-radius:4px; margin-bottom:4px;">Rank #2</div>
+          <div style="font-weight:700; color:#0a2540; font-size:1.05rem; margin-top:2px;">Extra Trees Regressor</div>
+          <div style="color:#475569; font-weight:800; font-size:1.5rem; margin:4px 0;">RMSE: ₹2,251</div>
           <div style="font-size:0.75rem; color:#64748b;">R²: 0.7601 · 100 Estimators</div>
         </div>
         """, unsafe_allow_html=True)
     with pod3:
         st.markdown("""
-        <div class="kpi-box" style="border-color:#334155;">
-          <div style="font-size:1.6rem;">🥉</div>
-          <div style="font-weight:700; color:#f8fafc; font-size:1.05rem; margin-top:2px;">SVR (RBF Kernel)</div>
-          <div style="color:#94a3b8; font-weight:800; font-size:1.5rem; margin:4px 0;">RMSE: ₹3,155</div>
+        <div class="kpi-box" style="border-top:3px solid #94a3b8;">
+          <div style="display:inline-block; background:#f1f5f9; color:#475569; font-size:0.75rem; font-weight:700; padding:2px 8px; border-radius:4px; margin-bottom:4px;">Rank #3</div>
+          <div style="font-weight:700; color:#0a2540; font-size:1.05rem; margin-top:2px;">SVR (RBF Kernel)</div>
+          <div style="color:#475569; font-weight:800; font-size:1.5rem; margin:4px 0;">RMSE: ₹3,155</div>
           <div style="font-size:0.75rem; color:#64748b;">R²: 0.5314 · Scaled C=100</div>
         </div>
         """, unsafe_allow_html=True)
@@ -865,14 +873,15 @@ with tab3:
         y=sim_df["Model"],
         x=sim_df["RMSE_INR"],
         orientation='h',
-        marker_color=['#2563eb', '#3b82f6', '#64748b', '#475569', '#334155'],
+        marker_color=['#0066cc', '#0284c7', '#64748b', '#94a3b8', '#cbd5e1'],
         text=[f"₹{v:,.0f}" for v in sim_df["RMSE_INR"]],
         textposition='outside',
     ))
     fig_rmse.update_layout(
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-        font_color='#94a3b8',
+        template='plotly_white',
+        paper_bgcolor='#ffffff',
+        plot_bgcolor='#ffffff',
+        font_color='#1e293b',
         xaxis_title="Cross-Validation RMSE in Indian Rupee (INR ₹)",
         yaxis=dict(autorange='reversed'),
         height=300,
@@ -884,7 +893,7 @@ with tab3:
 st.markdown("---")
 st.markdown("""
 <div style="text-align:center; color:#64748b; font-size:0.78rem; padding: 0.8rem 0 1.2rem;">
-  <strong>SkyFare Commercial Airline Price Portal · AIC354 ML Fundamentals Lab 3</strong><br>
+  <strong>SkyFare Domestic Flight Price Index</strong><br>
   Calibrated on 10,683 Domestic Flights · Currency: Indian Rupee (INR ₹)
 </div>
 """, unsafe_allow_html=True)
