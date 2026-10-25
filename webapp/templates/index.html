@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flight Fare Predictor | AI Airfare Intelligence</title>
+  <meta name="description" content="Predict domestic flight ticket fares using 10-Fold Cross-Validated Machine Learning algorithms trained on 10,683 real-world flight records." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <div class="bg-glow"></div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="container header-inner">
+      <div class="brand">
+        <span class="brand-icon">✈️</span>
+        <div>
+          <div class="brand-title">AeroPrice AI</div>
+          <div class="brand-sub">Flight Fare Intelligence & Estimation</div>
+        </div>
+      </div>
+      <div class="header-badges">
+        <span class="badge badge-accent">Model: <strong>{{ model_name }}</strong></span>
+        <span class="badge badge-subtle">10,683 Flights · 10-Fold CV</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container hero-content">
+      <div class="hero-tag">⚡ AIC354 Machine Learning Fundamentals · Assignment 3</div>
+      <h1 class="hero-title">Intelligent Flight Fare Predictor</h1>
+      <p class="hero-desc">
+        Calculate accurate flight ticket prices powered by evaluated machine learning regression models trained on India's primary domestic flight routes.
+      </p>
+
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-icon">📊</div>
+          <div class="kpi-val">10,683</div>
+          <div class="kpi-label">Flight Records</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">🔁</div>
+          <div class="kpi-val">10-Fold</div>
+          <div class="kpi-label">Cross-Validation</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">🤖</div>
+          <div class="kpi-val">5</div>
+          <div class="kpi-label">ML Algorithms</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">🎯</div>
+          <div class="kpi-val">RMSE</div>
+          <div class="kpi-label">Evaluation Metric</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <main class="container main-layout">
+    <!-- Form Card -->
+    <div class="card form-card">
+      <div class="card-header">
+        <span class="card-badge">Flight Parameters</span>
+        <h2>Trip & Itinerary Specifications</h2>
+      </div>
+
+      <form id="fare-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="airline">✈️ Airline</label>
+            <select id="airline" name="airline" class="form-control" required>
+              {% for a in airlines %}
+              <option value="{{ a }}" {% if a == 'IndiGo' %}selected{% endif %}>{{ a }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="stops">🛑 Total Stops</label>
+            <select id="stops" name="total_stops" class="form-control" required>
+              {% for s in stops %}
+              <option value="{{ s.value }}">{{ s.label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="source">🛫 Source City</label>
+            <select id="source" name="source" class="form-control" required>
+              {% for s in sources %}
+              <option value="{{ s }}" {% if s == 'Banglore' %}selected{% endif %}>{{ s }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="destination">🛬 Destination City</label>
+            <select id="destination" name="destination" class="form-control" required>
+              {% for d in destinations %}
+              <option value="{{ d }}" {% if d == 'Delhi' %}selected{% endif %}>{{ d }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="journey_date">📅 Date of Journey</label>
+            <input type="date" id="journey_date" name="journey_date" class="form-control" value="2024-05-15" required />
+          </div>
+
+          <div class="form-group">
+            <label for="duration_mins">⏱️ Flight Duration (minutes)</label>
+            <input type="number" id="duration_mins" name="duration_mins" class="form-control" value="170" min="30" max="2400" required />
+            <span class="hint" id="duration-hint">Approx. 2h 50m</span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="dep_time">⏰ Departure Time</label>
+            <input type="time" id="dep_time" name="dep_time" class="form-control" value="10:30" required />
+          </div>
+
+          <div class="form-group">
+            <label for="arrival_time">🛬 Arrival Time</label>
+            <input type="time" id="arrival_time" name="arrival_time" class="form-control" value="13:20" required />
+          </div>
+        </div>
+
+        <button type="submit" id="btn-submit" class="btn btn-primary">
+          <span class="btn-text">🔮 Calculate Estimated Fare</span>
+          <span class="btn-loader" style="display:none;">⏳ Computing...</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- Output Card -->
+    <div class="card result-card">
+      <div class="card-header">
+        <span class="card-badge">Instant Valuation</span>
+        <h2>Estimated Airfare</h2>
+      </div>
+
+      <div id="result-placeholder" class="placeholder-box">
+        <div style="font-size: 3rem; margin-bottom: 0.8rem;">🛫</div>
+        <div style="font-size: 1.1rem; font-weight: 700; color: #f8fafc;">Awaiting Flight Specifications</div>
+        <p style="color: #64748b; font-size: 0.88rem; max-width: 320px; margin: 0.5rem auto 0;">
+          Select your departure city, destination, and travel date, then click calculate to forecast ticket fare.
+        </p>
+      </div>
+
+      <div id="result-display" style="display: none;">
+        <div class="fare-hero" id="fare-hero">
+          <div class="fare-route" id="res-route">Banglore ➔ Delhi</div>
+          <div class="fare-amount" id="res-fare">₹7,450</div>
+          <div class="fare-sub" id="res-usd">Approx. $89.20 USD</div>
+          <div class="badge-tier" id="res-tier">ECONOMY STANDARD</div>
+        </div>
+
+        <div class="result-breakdown">
+          <div class="res-stat">
+            <div class="res-stat-label">Airline Carrier</div>
+            <div class="res-stat-val" id="res-airline">IndiGo</div>
+          </div>
+          <div class="res-stat">
+            <div class="res-stat-label">Predictive Engine</div>
+            <div class="res-stat-val" id="res-model">Extra Trees</div>
+          </div>
+        </div>
+
+        <div class="recommendation-box" id="recommendation-text">
+          💡 <strong>Booking Tip:</strong> Fares on this route typically rise closer to departure. Mid-week flights (Tuesday & Wednesday) offer optimal savings.
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-text">
+      AIC354 Machine Learning Fundamentals · Assignment 3 · Flight Fare Intelligence System
+    </div>
+  </footer>
+
+  <script>
+    const form = document.getElementById('fare-form');
+    const durInput = document.getElementById('duration_mins');
+    const durHint = document.getElementById('duration-hint');
+
+    durInput.addEventListener('input', () => {
+      const mins = parseInt(durInput.value) || 0;
+      const h = Math.floor(mins / 60);
+      const m = mins % 60;
+      durHint.textContent = `Approx. ${h}h ${m}m`;
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const btn = document.getElementById('btn-submit');
+      btn.disabled = true;
+      document.querySelector('.btn-text').style.display = 'none';
+      document.querySelector('.btn-loader').style.display = 'inline';
+
+      const jDate = new Date(document.getElementById('journey_date').value);
+      const depTime = document.getElementById('dep_time').value.split(':');
+      const arrTime = document.getElementById('arrival_time').value.split(':');
+
+      const payload = {
+        airline: document.getElementById('airline').value,
+        source: document.getElementById('source').value,
+        destination: document.getElementById('destination').value,
+        total_stops: parseInt(document.getElementById('stops').value),
+        journey_day: jDate.getDate(),
+        journey_month: jDate.getMonth() + 1,
+        journey_dayofweek: (jDate.getDay() + 6) % 7, // 0 = Mon
+        dep_hour: parseInt(depTime[0]),
+        dep_min: parseInt(depTime[1]),
+        arrival_hour: parseInt(arrTime[0]),
+        arrival_min: parseInt(arrTime[1]),
+        duration_mins: parseInt(durInput.value)
+      };
+
+      try {
+        const res = await fetch('/predict', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (data.error) {
+          alert('Error: ' + data.error);
+        } else {
+          document.getElementById('result-placeholder').style.display = 'none';
+          const disp = document.getElementById('result-display');
+          disp.style.display = 'block';
+
+          document.getElementById('res-fare').textContent = '₹' + data.fare.toLocaleString();
+          document.getElementById('res-usd').textContent = `Approx. $${data.fare_usd} USD`;
+          document.getElementById('res-route').textContent = data.route;
+          document.getElementById('res-airline').textContent = data.airline;
+          document.getElementById('res-model').textContent = data.model_used;
+
+          const tierElem = document.getElementById('res-tier');
+          tierElem.textContent = data.tier.toUpperCase();
+          tierElem.style.borderColor = data.color;
+          tierElem.style.color = data.color;
+          tierElem.style.background = data.color + '22';
+
+          document.getElementById('fare-hero').style.borderColor = data.color;
+        }
+      } catch (err) {
+        alert('Failed to connect to predictive engine.');
+      } finally {
+        btn.disabled = false;
+        document.querySelector('.btn-text').style.display = 'inline';
+        document.querySelector('.btn-loader').style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
